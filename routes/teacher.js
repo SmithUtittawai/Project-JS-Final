@@ -132,25 +132,25 @@ router.get('/createCheckIn/:course_id/:sec', async (req, res) => {
         let statusCreate = true;
         let checkTime = null
 
-        if (findSec.checkTime !== undefined || findSec.checkTime !== null || findSec.checkTime.length > 0) {
-            for (let checkIn of findSec.checkTime) {
-                if (checkIn) {
-                    let dateTime = new Date(checkIn.date);
-                    if (dateTime.getDate() === now.getDate() && dateTime.getMonth() === now.getMonth() && dateTime.getFullYear() === now.getFullYear()) {
-                        checkTime = {
-                            codeCheckIn: checkIn.code || 'error',
-                            course_name: checkDuplicate.course_name, 
-                            dateTime: findSec.time, 
-                            sec: req.params.sec, 
-                            checkDuplicate: checkDuplicate
-                        };
-                        console.log('checkTime', (checkTime || 'error'));
-                        statusCreate = false;
-                        break;
-                    }
-                }
-            }
-        }
+        // if (findSec.checkTime !== undefined || findSec.checkTime !== null || findSec.checkTime.length > 0) {
+        //     for (let checkIn of findSec.checkTime) {
+        //         if (checkIn) {
+        //             let dateTime = new Date(checkIn.date);
+        //             if (dateTime.getDate() === now.getDate() && dateTime.getMonth() === now.getMonth() && dateTime.getFullYear() === now.getFullYear()) {
+        //                 checkTime = {
+        //                     codeCheckIn: checkIn.code || 'error',
+        //                     course_name: checkDuplicate.course_name, 
+        //                     dateTime: findSec.time, 
+        //                     sec: req.params.sec, 
+        //                     checkDuplicate: checkDuplicate
+        //                 };
+        //                 console.log('checkTime', (checkTime || 'error'));
+        //                 statusCreate = false;
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // }
 
         if (statusCreate) {
 
@@ -181,19 +181,6 @@ router.get('/createCheckIn/:course_id/:sec', async (req, res) => {
 
                     await courseModel.findOneAndUpdate({course_id: req.params.course_id}, {course_section: findCourse.course_section});
 
-                    console.log(`{ 
-                        codeCheckIn: tmpCheckTime.code,
-                        course_name: findCourse.course_name, 
-                        dateTime: sec.time, 
-                        sec: sec.sec, 
-                        dataBeforeUpdate: findCourse 
-                    }`,{ 
-                        codeCheckIn: tmpCheckTime.code,
-                        course_name: findCourse.course_name, 
-                        dateTime: sec.time, 
-                        sec: sec.sec, 
-                        dataBeforeUpdate: findCourse 
-                    },)
                     res.status(200).json({
                         val: { 
                             codeCheckIn: tmpCheckTime.code,
