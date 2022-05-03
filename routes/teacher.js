@@ -132,22 +132,7 @@ router.get('/createCheckIn/:course_id/:sec', async (req, res) => {
         let statusCreate = true;
         let checkInOld = null
 
-        let findCourseToCheck = await courseModel.findOne({course_id: req.params.course_id}); 
-        // try {
-        //     if (findCourseToCheck.course_section.length === 0) {
-        //         await courseModel.findOneAndDelete({course_id: req.params.course_id});
-        //     }
-        // } catch (err) { console.log(err) }
-
-        // if (findCourseToCheck.course_section.length > 0) {
-        //     for (let course of findCourseToCheck.course_section) {
-        //         if (course === null) {
-        //             await courseModel.findOneAndDelete({course_id: req.params.course_id});
-        //         }
-        //     }
-        // }
-
-        try {
+        if (findSec.checkTime !== undefined || findSec.checkTime !== null || findSec.checkTime.length > 0 || findSec.checkTime.length !== 0) {
             for (let checkIn of findSec.checkTime) {
                 let dateTime = new Date(checkIn.date);
                 if (dateTime.getDate() === now.getDate() && dateTime.getMonth() === now.getMonth() && dateTime.getFullYear() === now.getFullYear()) {
@@ -164,7 +149,7 @@ router.get('/createCheckIn/:course_id/:sec', async (req, res) => {
                     break;
                 }
             }
-        } catch (err) { console.log(err) }
+        }
 
         if (statusCreate) {
 
