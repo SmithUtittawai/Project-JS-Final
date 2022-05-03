@@ -131,7 +131,18 @@ router.get('/createCheckIn/:course_id/:sec', async (req, res) => {
         // let checkDuplicate = await courseModel.findOne({ course_id: req.params.course_id });
         // let findSec = checkDuplicate.course_section.find(val => val.sec == parseInt(req.params.sec));
         // let statusCreate = true;
-        // let checkTime = null
+        let checkTime = null
+
+        checkTime = {
+            codeCheckIn: 'codeCheckIn',
+            course_name: 'Course_name', 
+            dateTime: {
+                start: '09:00:00',
+                end: '12:00:00'
+            }, 
+            sec: 'Sec', 
+            checkDuplicate: 'None'
+        };
 
         // if (findSec.checkTime !== undefined || findSec.checkTime !== null || findSec.checkTime.length > 0 || findSec.checkTime.length !== 0) {
         //     for (let checkIn of findSec.checkTime) {
@@ -212,7 +223,7 @@ router.get('/createCheckIn/:course_id/:sec', async (req, res) => {
         //         throw new Error('Not found course!');
         //     }
         // } else {
-            res.status(200).json({ val: null, msg: 'Check in today already created!'});
+            res.status(200).json({ val: checkTime, msg: 'Check in today already created!'});
         // }
 
     // } catch (err) { res.status(500).json({ msg: err.message }); }
