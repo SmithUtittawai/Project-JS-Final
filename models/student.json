@@ -1,0 +1,15 @@
+{
+    "std_id": "String",
+    "std_pwd": "String",
+    "std_name": "String",
+    "std_couse": [
+        {
+            "id": "id_subject",
+            "sec": 1
+        },
+        {
+            "id": "id_subject",
+            "sec": 1
+        }
+    ]
+}

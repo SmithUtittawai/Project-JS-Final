@@ -1,0 +1,30 @@
+[
+
+    {
+        "course_id": "630240111",
+        "course_name": "String",
+        "course_section": [
+            {
+                "sec": 1,
+                "day": "Monday",
+                "time": {
+                    "start": "09:00:00",
+                    "end": "12:00:00"
+                },
+                "checkTime": [
+                    {
+                        "code": "xD142b",
+                        "date": "new Date()",
+                        "students": []
+                    },
+                    {
+                        "code": "xD142b",
+                        "date": "new Date()",
+                        "students": ["630602162412", "63060216232"]
+                    }
+                ]
+            }
+        ]
+    }
+
+]

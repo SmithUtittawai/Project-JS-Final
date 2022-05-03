@@ -1,0 +1,24 @@
+[
+    {
+        "tec_id": "String",
+        "tec_pwd": "String",
+        "tec_name": "String",
+        "tec_couse": [
+            {
+                "id": "101",
+                "sec": 1
+            }
+        ]
+    },
+    {
+        "tec_id": "String",
+        "tec_pwd": "String",
+        "tec_name": "String",
+        "tec_couse": [
+            {
+                "id": "101",
+                "sec": 3
+            }
+        ]
+    }
+]

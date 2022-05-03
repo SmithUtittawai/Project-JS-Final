@@ -1,0 +1,47 @@
+[
+    {
+        "tec_id": "teacher1",
+        "tec_pwd": "teacher1pwd",
+        "tec_name": "Somchai Cheingpongpa",
+        "tec_course": [
+            {
+                "id": "101",
+                "sec": 1
+            }
+        ]
+    },
+    {
+        "tec_id": "teacher2",
+        "tec_pwd": "teacher2pwd",
+        "tec_name": "Yupin Sukpukhun",
+        "tec_couser": [
+            {
+                "id": "102",
+                "sec": 3
+            }
+        ]
+    },
+    {
+        "tec_id": "teacher3",
+        "tec_pwd": "teacher3pwd",
+        "tec_name": "Anirach Mingkhwan",
+        "tec_couser": [
+            {
+                "id": "103",
+                "sec": 3
+            }
+        ]
+    }
+    ,
+    {
+        "tec_id": "teacher4",
+        "tec_pwd": "teacher4pwd",
+        "tec_name": "Anirach Mingkhwan",
+        "tec_couser": [
+            {
+                "id": "103",
+                "sec": 3
+            }
+        ]
+    }
+]

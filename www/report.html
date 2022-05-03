@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History</title>
+    
+    <!--! Vue 3 & axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.27.2/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@3"></script>
+    
+    <!--! Tailwind css -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+
+    <!--! Font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!--! PDF REPORT  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <link rel="stylesheet" href="./css/stylee.css">
+
+</head>
+
+<body style="margin: 0; padding:0" class="bg-[url('./imgs/background.png')] bg-no-repeat bg-cover">
+
+    <div id="app">
+        <div class="w-full h-screen">
+            
+            <!--! HEADER SHOW -->
+            <div class="absolute w-full top-0 left-0">
+                <div class="w-11/12 font-semibold text-right text-white">
+                    <p class="text-4xl pt-20">
+                        Time : {{ new Date().getHours() + ':' + new Date().getMinutes() }}
+                    </p>
+                    <p class="text-2xl mt-4">
+                        Date : {{ new Date().getDate() + '/' + (new Date().getMonth() + 1) + '/' + new Date().getFullYear() }}
+                    </p>
+                </div>
+    
+                <p class="-mt-[80px] text-center text-7xl text-white font-semibold font_oswald">
+                    Report
+                </p>
+            </div>
+
+
+            <div class="w-full flex justify-center pt-96">
+                <div class="w-9/12">
+                    
+                    <div class="-mt-[120px]">
+                        <div class="bg-orange-500 grid grid-cols-7 text-center font-bold text-lg">
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                Date
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                Course ID
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                Course
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                Time
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                Checked-in
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                Absent
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                Report
+                            </div>
+                        </div>
+                        <div
+                            v-for="(item, index) in dataReport"
+                            class="bg-white grid grid-cols-7 text-center text-lg"
+                        >
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                {{ getTextToShow('date', item.checkInDate) }}
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                {{ item.course_id }}
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                {{ item.course_name + ' Sec.' + item.sec }}
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                {{ getTextToShow('time', item.course_date) }}
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black text-green-700 font-semibold">
+                                {{ item.CancelClass ? '-' : item.total.checkIn }}
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black text-red-600 font-semibold">
+                                {{ item.CancelClass ? 'Class Canceled' : item.total.absent }}
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black flex justify-center items-center">
+                                <button 
+                                    @click="onReport(item)" 
+                                    :disabled="item.CancelClass"
+                                    :class="{'cursor-not-allowed': item.CancelClass}"
+                                    class="w-11/12 h-5/6 bg-gray-300 pb-3 pt-1 text-sm font-semibold rounded-lg
+                                    hover:bg-gray-400 hover:text-gray-900 flex justify-center items-center"
+                                >
+                                    <p class="pt-1.5">Report</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                
+                </div>
+            </div>
+
+        </div>
+
+        
+        <div id="element-to-print" class="w-full flex justify-center" v-if="dataToPDF">
+            <div class="w-full">
+                    
+                <div class="w-full font-semibold tracking-wide flex flex-col justify-between text-xl">
+                    <p>Report check-in&nbsp;&nbsp;:&nbsp;&nbsp;{{ dataToPDF.course_name }}</p>
+                    <p class="mt-2">Sec.{{ dataToPDF.sec }}&nbsp;&nbsp;DateTime : {{ getDateTextToShow(dataToPDF.checkInDate) }} &nbsp;&nbsp;Time.{{ getTextToShow('time', dataToPDF.course_date) }}</p>
+                    <p>{{ dataUser.id }}</p>
+                </div>
+                
+                <div class="mt-6 mb-20">
+                    <div class="bg-orange-500 grid grid-cols-3 text-center font-bold text-lg">
+                        <div class="px-4 py-2 border border-[1px] border-black">
+                            Student ID
+                        </div>
+                        <div class="px-4 py-2 border border-[1px] border-black">
+                            Firstname - Lastname
+                        </div>
+                        <div class="px-4 py-2 border border-[1px] border-black">
+                            Status
+                        </div>
+                    </div>
+                    <div
+                        v-for="(item, index) in dataToPDF.students"
+                        class="bg-white grid grid-cols-3 text-center text-lg"
+                    >
+                        <div class="px-4 py-2 border border-[1px] border-black">
+                            {{ item.idSTD }}
+                        </div>
+                        <div class="px-4 py-2 border border-[1px] border-black">
+                            {{ item.name }}
+                        </div>
+                        <div 
+                            class="px-4 py-2 border border-[1px] border-black font-semibold"
+                            :class="{
+                                'text-green-700': item.statusCheckIn,
+                                'text-red-700': !item.statusCheckIn
+                            }"
+                        >
+                            {{ item.statusCheckIn ? 'Check-In' : 'Absent' }}
+                        </div>
+                    </div>
+                    <div :class="{'hidden': dataToPDF.students}">
+                        <p class="text-center text-lg text-gray-700">
+                            No data
+                        </p>
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+
+        
+    </div>
+
+</body>
+</html>
+
+
+<script>
+
+    function createAndDownloadPDF() {
+
+        var opt = {
+            margin:       0.2,
+            filename:     'myfile.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        var element = document.getElementById('element-to-print');
+        html2pdf().from(element).set(opt).save();
+
+        setTimeout(() => {
+            element.style.display = 'none';
+        }, 0);
+    }
+
+    Vue.createApp({
+        data() {
+            return {
+                dataUser: {id: '', name: '', _id: ''},
+                dataReport: null,
+                dataToPDF: null
+            }
+        },
+        methods: {
+
+            
+            addZeroToFront(text) {
+                if (text.toString().length < 2) {
+                    return '0' + text;
+                }
+            },
+            
+
+            getDateTextToShow(val) {
+                let date = new Date(val);
+                let day = this.addZeroToFront(date.getDate());
+                let month = this.addZeroToFront(date.getMonth() + 1);
+                let year = date.getFullYear();
+                return day + '/' + month + '/' + year;
+            },
+
+
+            onReport(item) {
+                if (item.students.length === 0) {
+                    alert('No data!')
+                } else {
+                    this.dataToPDF = item;
+                    console.log('this.dataToPDF', this.dataToPDF);
+                    setTimeout(() => {
+                        createAndDownloadPDF();
+                        this.dataToPDF = null;
+                    }, 0);
+                }
+            },
+
+            getTextToShow(type, text) {
+                try {
+                    if (type == 'date') {
+                        return text.split('T')[0].split('-').reverse().join('/')
+                    } else if (type == 'time') {
+                        let start = text.start.split(':')[0] + ':' + text.start.split(':')[1]
+                        let end = text.end.split(':')[0] + ':' + text.end.split(':')[1]
+                        return start + ' - ' + end;
+                    }
+                } catch(err) {
+                    return '';
+                }
+            },
+            
+            async checkUserLogin() {
+                await axios.get('http://localhost:3000/checkUserLogin')
+                    .then(async (res) => {
+                        if (res.data.val === null) {
+                            alert(res.data.msg);
+                            window.location.href = 'http://localhost:3000/login.html';
+                        } else {
+                            this.dataUser = {
+                                id: res.data.val.std_id,
+                                name: res.data.val.std_name,
+                                _id: res.data.val._id
+                            };
+                        }
+                    })
+                    .catch((err) => { console.log(err); });
+            },
+
+            async getDataReport() {
+                await axios.get('http://localhost:3000/tec/getDataReport')
+                    .then((res) => {
+
+                        console.log(res.data)
+                        this.dataReport = res.data.val;
+
+                        for (let i = 0; i < this.dataReport.length; i++) {
+                            if (!this.dataReport[i].checkInDate) {
+                                this.dataReport.splice(i, 1);
+                            }
+                        }
+
+                    })
+                    .catch((err) => { console.log(err); })
+            }
+
+        },
+        async mounted() {
+            await this.checkUserLogin();
+            await this.getDataReport();
+        },
+    }).mount('#app');
+
+</script>
+

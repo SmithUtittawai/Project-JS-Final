@@ -1,0 +1,24 @@
+{
+    "course_id": "152464225",
+    "course_name": "String",
+    "course_section": [
+        {
+            "sec": 1,
+            "day": "Monday",
+            "time": {
+                "start": "09:00:00",
+                "end": "12:00:00"
+            },
+            "checkTime": []
+        },
+        {
+            "sec": 4,
+            "day": "Monday",
+            "time": {
+                "start": "13:00:00",
+                "end": "16:00:00"
+            },
+            "checkTime": []
+        }
+    ]
+}

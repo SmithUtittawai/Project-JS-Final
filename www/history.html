@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History</title>
+    
+    <!--! Vue 3 & axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.27.2/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@3"></script>
+    
+    <!--! Tailwind css -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+
+    <!--! Font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="./css/stylee.css">
+
+</head>
+
+<body style="margin: 0; padding:0" class="bg-[url('./imgs/background.png')] bg-no-repeat bg-cover">
+
+    <div id="app">
+        <div class="w-full h-screen">
+            
+            <!--! HEADER SHOW -->
+            <div class="absolute w-full top-0 left-0">
+                <div class="w-11/12 font-semibold text-right text-white">
+                    <p class="text-4xl pt-20">
+                        Time : {{ new Date().getHours() + ':' + new Date().getMinutes() }}
+                    </p>
+                    <p class="text-2xl mt-4">
+                        Date : {{ new Date().getDate() + '/' + (new Date().getMonth() + 1) + '/' + new Date().getFullYear() }}
+                    </p>
+                </div>
+    
+                <p class="-mt-[80px] text-center text-7xl text-white font-semibold font_oswald">
+                    History
+                </p>
+            </div>
+
+
+            <div class="w-full flex justify-center pt-96 pb-40">
+                <div class="w-8/12">
+                    
+                    
+                    
+                    <div class="-mt-[120px]">
+                        <div class="w-full font-semibold tracking-wide flex justify-between text-3xl uppercase">
+                            <p>STUDENT : {{ dataUser.name }}</p>
+                            <p>{{ dataUser.id }}</p>
+                        </div>
+                        <div class="bg-orange-500 grid grid-cols-5 text-center font-bold text-lg">
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                Date
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                Course Code
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                Course
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                Time
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                Status
+                            </div>
+                        </div>
+                        <div
+                            v-for="(item, index) in dataHistory"
+                            class="bg-white grid grid-cols-5 text-center text-lg"
+                        >
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                {{ getTextToShow('date', item.date) }}
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                {{ item.idSubject }}
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                {{ item.nameSubject }}
+                            </div>
+                            <div class="px-4 py-2 border border-[1px] border-black">
+                                {{ getTextToShow('time', item.time) }}
+                            </div>
+                            <div 
+                                class="font-semibold px-4 py-2 border border-[1px] border-black"
+                                :class="{
+                                    'text-green-600': item.statusCheckIn,
+                                    'text-red-500': !item.statusCheckIn || item.cancelClass
+                                }"
+                            >
+                                {{ item.cancelClass ? 'Class Canceled' : (item.statusCheckIn ? 'Check In' : 'Absent') }}
+                            </div>
+                        </div>
+                    </div>
+                
+                
+                </div>
+            </div>
+
+
+
+        </div>
+        
+    </div>
+
+</body>
+</html>
+
+
+<script>
+
+    Vue.createApp({
+        data() {
+            return {
+                dataUser: {id: '', name: '', _id: ''},
+                dataHistory: null
+            }
+        },
+        methods: {
+
+            getTextToShow(type, text) {
+                if (type == 'date') {
+                    return new Date(text).getDate() + '/' + (new Date(text).getMonth() + 1) + '/' + new Date(text).getFullYear();
+                } else if (type == 'time') {
+                    let start = text.start.split(':')[0] + ':' + text.start.split(':')[1]
+                    let end = text.end.split(':')[0] + ':' + text.end.split(':')[1]
+                    return start + ' - ' + end
+                }
+            },
+            
+            async checkUserLogin() {
+                await axios.get('http://localhost:3000/checkUserLogin')
+                    .then(async (res) => {
+                        if (res.data.val === null) {
+                            alert(res.data.msg);
+                            window.location.href = 'http://localhost:3000/login.html';
+                        } else {
+                            this.dataUser = {
+                                id: res.data.val.std_id,
+                                name: res.data.val.std_name,
+                                _id: res.data.val._id
+                            };
+                        }
+                    })
+                    .catch((err) => { console.log(err); });
+            },
+
+            async getDataHistory() {
+                await axios('http://localhost:3000/std/getDataHistory')
+                    .then((res) => {
+                        
+                        this.dataHistory = [];
+                        console.log(this.dataHistory);
+                        for (let i = 0; i < res.data.val.length; i++) {
+                            if (res.data.val[i].date) {
+                                this.dataHistory.push(res.data.val[i]);
+                            }
+                        }
+
+                    })
+                    .catch((err) => { console.log(err); })
+            }
+
+        },
+        async mounted() {
+            await this.checkUserLogin();
+            await this.getDataHistory();
+        },
+    }).mount('#app');
+
+</script>
+

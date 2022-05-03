@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check-IN</title>
+    
+    <!--! Vue 3 & axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.27.2/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@3"></script>
+    
+    <!--! Tailwind css -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!--! Time table js -->
+    <script src="./plugins/timetable.js-master/dist/scripts/timetable.js"></script>
+    <link rel="stylesheet" href="./plugins/timetable.js-master/dist/styles/timetablejs.css">
+
+    <!--! Font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="./css/stylee.css">
+    <style>
+        .bg_black {
+            background-color: #444 !important;
+            border: 0px !important;
+        }
+
+        .bg_green {
+            background-color: green !important;
+            border: 0px !important;
+        }
+        
+        .bg_gray {
+            background-color: #999 !important;
+            border: 0px !important;
+        }
+
+    </style>
+
+</head>
+
+<body style="margin: 0; padding:0">
+
+    <div id="app">
+
+        <!--! HEADER SHOW -->
+        <div class="absolute w-full top-0 left-0 ">
+            <div class="w-11/12 font-semibold text-right text-white">
+                <p class="text-4xl pt-20">
+                    Time : {{ new Date().getHours() + ':' + new Date().getMinutes() }}
+                </p>
+                <p class="text-2xl mt-4">
+                    Date : {{ new Date().getDate() + '/' + (new Date().getMonth() + 1) + '/' + new Date().getFullYear() }}
+                </p>
+            </div>
+
+            <p class="-mt-[80px] text-center text-7xl text-white font-semibold font_oswald">
+                Check - IN
+            </p>
+        </div>
+
+
+        <div 
+            class="
+                pt-60 w-full h-screen bg-[url('./imgs/background.png')] bg-no-repeat bg-cover
+            "
+        >
+            <div class="w-full h-full flex justify-center items-center">
+                <div class="w-[800px] -mt-[80px]">
+                
+                    <div class="text-2xl uppercase flex flex-row justify-between">
+                        <p>STUDENT : {{ dataUser.name }}</p>
+                        <p>{{ dataUser.id }}</p>
+                    </div>
+                
+                    <div class="mt-6 timetable"></div>
+                
+                    <div class="w-full flex justify-center mt-6">
+                        <a  href="./history.html"
+                            class="
+                                bg-[#F8832F] py-4 px-12 rounded-lg text-xl text-white 
+                            "
+                        >
+                            Check-in History
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div id="popup_CheckIn" class="hidden">
+            <div class="fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 p-10 rounded-lg bg-white z-40 w-96">
+                <div class="w-full flex justify-between items-center">
+                    <p>Check-in CODE :</p>
+                    <i class="fa-solid fa-xmark cursor-pointer" onclick="onPopup(0)"></i>
+                </div>
+                <div class="w-full mt-3">
+                    <p id="pop_subject_detail"></p>
+                    <p id="pop_dateTime"></p>
+                </div>
+                <div class="w-full mt-3">
+                    <input id="code_std_checkIn" type="text" class="w-full py-2.5 px-4 bg-gray-300 px-2 text-black" placeholder="XXX-XXX-XXX">
+                </div>
+                <input type="text" id="subject_id_and_sec" class="hidden">
+                <input type="text" id="code_checkIn" class="hidden" />
+                <div class="w-full flex justify-center mt-4">
+                    <button onclick="onCheckIn()" id="btn_sub_cancel" class="w-10/12 bg-[#B5E451] py-2 rounded-md">
+                        <span>Check-In <i class="fa-solid fa-school-circle-check"></i></span>
+                    </button>
+                </div>
+            </div>
+    
+            <div onclick="onPopup(0)" class="overlay z-30 bg-black opacity-40 w-full h-full fixed top-0 left-0"></div>
+        </div>
+
+    </div>
+
+</body>
+</html>
+
+
+<script>
+
+    document.onkeydown = function(evt) {
+        evt = evt || window.event;
+        if (evt.keyCode == 27) {
+            onPopup(0);
+        }
+    }
+    
+    function sendDataToPopup(val, valCheckIn) {
+        
+        if (valCheckIn.statusCheckIn) {
+            alert(`You checked-in :)`);
+            return;
+        }
+
+        if (valCheckIn.status == '0') {
+            alert(`Teacher cancel class`);
+            return;
+        }
+
+        onPopup(1);
+        let dataPopup = getDataToPopupCheckIn(val.subject_name, val.sec, val.time, valCheckIn.code);
+        document.querySelector('#pop_subject_detail').innerHTML = dataPopup.subject_detail;
+        document.querySelector('#pop_dateTime').innerHTML = dataPopup.dateTime;
+        document.querySelector('#code_checkIn').value = dataPopup.code;
+        document.querySelector('#subject_id_and_sec').value = val.subject_id + '-' + val.sec;
+
+    }
+  
+    async function onCheckIn(val, valCheckIn) {
+
+        let codeCheckIn = document.querySelector('#code_checkIn').value;
+        let codeStdCheckIn = document.querySelector('#code_std_checkIn').value;
+        let subjectIdAndSec = document.querySelector('#subject_id_and_sec').value.split('-');
+
+        if (codeCheckIn === codeStdCheckIn) {
+            await axios.post(`http://localhost:3000/std/CheckIn/${subjectIdAndSec[0]}/${subjectIdAndSec[1]}/${codeStdCheckIn}`)
+                .then((res) => {
+                    alert(`Check-in success :)`);
+                    console.log(res.data);
+                    location.reload();
+                })
+                .catch((err) => { alert('Check-in failed, Code invalid'); })
+        } else {
+            alert('Check-in fail, code invalid!');
+        }
+
+    }
+
+    function onPopup(status) {
+        if (status === 0) {
+            document.getElementById('popup_CheckIn').classList.add('hidden');
+        } else {
+            document.getElementById('popup_CheckIn').classList.remove('hidden');
+        }
+    }
+
+    function getDataToPopupCheckIn(subject_name, subject_sec, dateTime, codeCheckIn) {
+        
+        const addZeroToFront = (val) => {
+            if (val.toString().length > 2) {
+                return val;
+            }
+            return '0' + val;
+        }
+        
+        let tmpTime = ['', '', ''];
+        tmpTime[0] = new Date();
+        tmpTime[0] = addZeroToFront(tmpTime[0].getDate()) + '/' 
+            + addZeroToFront(tmpTime[0].getMonth() + 1) + '/' 
+            + addZeroToFront(tmpTime[0].getFullYear());
+        tmpTime[1] = dateTime.start.split(':')[0] + ':' + dateTime.start.split(':')[1];
+        tmpTime[2] = dateTime.end.split(':')[0] + ':' + dateTime.end.split(':')[1];
+        tmpTime[0] = tmpTime[0] + ' ' + tmpTime[1] + ' - ' + tmpTime[2];
+
+        return {
+            subject_detail: subject_name + ' Sec.' + subject_sec,
+            dateTime: tmpTime[0],
+            code: codeCheckIn
+        }
+        
+    }
+
+
+
+    Vue.createApp({
+        data() {
+            return {
+                course: [],
+                dataUser: { name: '', id: '' },
+                dataPopup: null
+            }
+        },
+        methods: {
+
+            async checkUserLogin() {
+                await axios.get('http://localhost:3000/checkUserLogin')
+                    .then(async (res) => {
+                        if (res.data.val === null) {
+                            alert(res.data.msg);
+                            window.location.href = 'http://localhost:3000/login.html';
+                        } else {
+                            this.dataUser = {
+                                id: res.data.val.std_id,
+                                name: res.data.val.std_name,
+                                _id: res.data.val._id
+                            };
+                            this.getCourse();
+                        }
+                    })
+                    .catch((err) => { console.log(err); });
+            },
+            
+            async getCourse(){
+                await axios.get('http://localhost:3000/std/displayCourseStd')
+                .then((res) => {
+                    this.course = res.data.val
+                })
+                .catch((err) => { console.log(err); });
+            },
+
+            async setTableView() {
+                
+                var listDay = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+                var timetable = new Timetable();
+                timetable.setScope(8, 21); // optional, only whole hours between 0 and 23
+                timetable.useTwelveHour(); //optional, displays hours in 12 hour format (1:00PM)
+                timetable.addLocations(listDay);
+
+                console.log(this.course);
+                let tmpTime = [null, null];
+                for (let item of this.course) {
+                    console.log('item = ', item);
+
+                    let valCheckIn = null;
+
+                    await axios.get(`http://localhost:3000/getCheckIn/${item.subject_id}/${item.sec}`)
+                        .then((res) => {
+                            valCheckIn = res.data.val;
+                        })
+                        .catch((err) => { alert('เกิดข้อผิดพลาดบางอย่าง'); console.log(err); });
+                    
+
+                    let tmpStatus = -1;
+
+                    try {
+                        tmpStatus = valCheckIn.status;
+                        valCheckIn.statusCheckIn = false;
+                    } catch (err) { 
+                        tmpStatus = 3; // not open checkin
+                    }
+                    
+                    await axios.get(`http://localhost:3000/checkStudentLogin/${item.subject_id}/${item.sec}/${this.dataUser._id}`)
+                        .then((res) => {
+                            if (res.data.statusCheckIn) {
+                                tmpStatus = 2;
+                                valCheckIn.statusCheckIn = true;
+                                console.log(item.subject_name, ' - Check in')
+                            }
+                        })
+                        .catch((err) => { console.log(item.subject_name,' - Not check-in'); });
+
+                    let tmpClass = '';
+                    switch (parseInt(tmpStatus)) {
+                        case 0: tmpClass = 'bg_black'; break; 
+                        case 2: tmpClass = 'bg_green'; break;
+                        case 3: tmpClass = 'bg_gray'; break;
+                    }
+                    
+                    console.log('\n\nitem = ', item)
+                    console.log('\n\nvalCheckIn = ', valCheckIn)
+                    var options = {
+                        class: tmpClass,
+                        onClick: function(event, timetable, clickEvent) {
+                            sendDataToPopup(item, valCheckIn);
+                        }
+                    };
+
+                    
+                    let now = new Date();
+                    tmpTime[0] = {
+                        year: now.getFullYear(),
+                        month: now.getMonth(),
+                        day: now.getDate(),
+                        hour: item.time.start.split(':')[0],
+                        minute: item.time.start.split(':')[1]
+                    };
+
+                    tmpTime[1] = {
+                        year: now.getFullYear(),
+                        month: now.getMonth(),
+                        day: now.getDate(),
+                        hour: item.time.end.split(':')[0],
+                        minute: item.time.end.split(':')[1]
+                    };
+
+                    tmpTime[0] = new Date(tmpTime[0].year, tmpTime[0].month, tmpTime[0].day, tmpTime[0].hour, tmpTime[0].minute);
+                    tmpTime[1] = new Date(tmpTime[1].year, tmpTime[1].month, tmpTime[1].day, tmpTime[1].hour, tmpTime[1].minute);
+
+                    timetable.addEvent(item.subject_name, item.day, tmpTime[0], tmpTime[1], options);
+                }
+
+                var renderer = new Timetable.Renderer(timetable);
+                renderer.draw('.timetable'); // any css selector
+            },
+
+        },
+        async mounted() {
+            await this.checkUserLogin();
+            await this.getCourse();
+            this.setTableView();
+        },
+    }).mount('#app')
+</script>
+

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="./css/stylee.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.27.2/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@3"></script>
+
+</head>
+<body class="background">
+        
+    <div id="app">
+        <div class="container">
+            <center><img src="imgs/icon.png"/></center>
+            <h1 class="font_oswald" style="margin-left: -10px;" >Check - IN</h1>
+            
+            <div class="form-Username">
+                <label for="Username">Username</label>
+                <input v-model="form.id" type="text" placeholder="Username">
+            </div>
+
+            <div class="form-Password">
+                <label for="Password">Password</label>
+                <input v-model="form.pwd" type="text" placeholder="Password">
+            </div>
+
+            <div>
+                <input 
+                    v-model="statusLogin.std" 
+                    @click="onSelectStatus('std')"
+                    :checked="statusLogin.std"
+                    type="radio"
+                />
+                student
+                <input 
+                    v-model="statusLogin.tec"
+                    @click="onSelectStatus('tec')" 
+                    :checked="statusLogin.tec"
+                    type="radio"
+                />
+                teacher
+            </div>
+
+            <button @click="onLogin()" class="button">Login</button>
+
+        </div>
+    </div>
+
+</body>
+</html>
+
+<script>
+
+    Vue.createApp({
+
+        data() {
+            return {
+                form: {
+                    id: '',
+                    pwd: ''
+                },
+                statusLogin: {
+                    std: true,
+                    tec: false
+                }
+            }
+        },
+        methods: {
+            async onLogin() {
+                //! student login
+                if (this.statusLogin.std !== false) {
+                    await axios.post('http://localhost:3000/login', {
+                        statusLogin: 'std',
+                        std_id: this.form.id,
+                        std_pwd: this.form.pwd
+                    }).then((res) => {
+                        console.log(res);
+                        if (res.status === 200) {
+                            alert(res.data.msg);
+                            window.location.href = 'http://localhost:3000/index.html';
+                        }
+                    }).catch((err) => {
+                        alert(err.response.data.msg);
+                        this.form.id = '';
+                        this.form.pwd = '';
+                    });
+                } else if (this.statusLogin.tec !== false) {
+                    await axios.post('http://localhost:3000/login', {
+                        statusLogin: 'tec',
+                        tec_id: this.form.id,
+                        tec_pwd: this.form.pwd
+                    }).then((res) => {
+                        console.log(res);
+                        if (res.status === 200) {
+                            alert(res.data.msg);
+                            window.location.href = 'http://localhost:3000/teacherindex.html';
+                        }
+                    }).catch((err) => {
+                        alert(err.response.data.msg);
+                        this.form.id = '';
+                        this.form.pwd = '';
+                    });
+                }
+            },
+            onSelectStatus(status) {
+                this.statusLogin[status] = true;
+                this.statusLogin[status === 'std' ? 'tec' : 'std'] = false;
+            }
+        },
+        async mounted() {
+            // await axios.post('http://localhost:3000/login', this.form).then((res) => console.log(res.data))
+            // .catch((err) => console.log(err.response.data.msg));
+        },
+
+    }).mount('#app')
+</script>
