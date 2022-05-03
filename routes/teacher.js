@@ -162,7 +162,7 @@ router.get('/createCheckIn/:course_id/:sec', async (req, res) => {
                 if (sec) {
                     let code = Math.random().toString(36).substring(2, 8).toUpperCase();
                     
-                    let checkTime = {
+                    let tmpCheckTime = {
                         "code": code,
                         "date": new Date(),
                         "students": [],
@@ -174,7 +174,7 @@ router.get('/createCheckIn/:course_id/:sec', async (req, res) => {
                             course.checkTime = [];
                         }
                         if (course.sec == parseInt(req.params.sec)) {
-                            course.checkTime.push(checkTime);
+                            course.checkTime.push(tmpCheckTime);
                         }
                     }
 
@@ -187,7 +187,7 @@ router.get('/createCheckIn/:course_id/:sec', async (req, res) => {
                         sec: sec.sec, 
                         dataBeforeUpdate: findCourse 
                     }`,{ 
-                        codeCheckIn: checkTime.code,
+                        codeCheckIn: tmpCheckTime.code,
                         course_name: findCourse.course_name, 
                         dateTime: sec.time, 
                         sec: sec.sec, 
@@ -195,7 +195,7 @@ router.get('/createCheckIn/:course_id/:sec', async (req, res) => {
                     },)
                     res.status(200).json({
                         val: { 
-                            codeCheckIn: checkTime.code,
+                            codeCheckIn: tmpCheckTime.code,
                             course_name: findCourse.course_name, 
                             dateTime: sec.time, 
                             sec: sec.sec, 
