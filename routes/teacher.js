@@ -126,11 +126,12 @@ router.get('/createCheckIn/:course_id/:sec', async (req, res) => {
 
     // try {
 
-        let now = new Date();
-        let checkDuplicate = await courseModel.findOne({ course_id: req.params.course_id });
-        let findSec = checkDuplicate.course_section.find(val => val.sec == parseInt(req.params.sec));
-        let statusCreate = true;
-        let checkTime = null
+
+        // let now = new Date();
+        // let checkDuplicate = await courseModel.findOne({ course_id: req.params.course_id });
+        // let findSec = checkDuplicate.course_section.find(val => val.sec == parseInt(req.params.sec));
+        // let statusCreate = true;
+        // let checkTime = null
 
         // if (findSec.checkTime !== undefined || findSec.checkTime !== null || findSec.checkTime.length > 0 || findSec.checkTime.length !== 0) {
         //     for (let checkIn of findSec.checkTime) {
@@ -150,69 +151,69 @@ router.get('/createCheckIn/:course_id/:sec', async (req, res) => {
         //     }
         // }
 
-        if (statusCreate) {
+        // if (statusCreate) {
 
-            let findCourse = await courseModel.findOne({course_id: req.params.course_id});
+        //     let findCourse = await courseModel.findOne({course_id: req.params.course_id});
 
-            if (findCourse.course_section.length > 0) {
+        //     if (findCourse.course_section.length > 0) {
 
-                let sec = findCourse.course_section.find(val => val.sec == parseInt(req.params.sec));
+        //         let sec = findCourse.course_section.find(val => val.sec == parseInt(req.params.sec));
                 
-                if (sec) {
-                    let code = Math.random().toString(36).substring(2, 8).toUpperCase();
+        //         if (sec) {
+        //             let code = Math.random().toString(36).substring(2, 8).toUpperCase();
                     
-                    let tmpCheckTime = {
-                        "code": code,
-                        "date": new Date(),
-                        "students": [],
-                        "status": 1
-                    }
+        //             let tmpCheckTime = {
+        //                 "code": code,
+        //                 "date": new Date(),
+        //                 "students": [],
+        //                 "status": 1
+        //             }
                     
-                    for (let course of findCourse.course_section) {
-                        if (!course.checkTime) {
-                            course.checkTime = [];
-                        }
-                        if (course.sec == parseInt(req.params.sec)) {
-                            course.checkTime.push(tmpCheckTime);
-                        }
-                    }
+        //             for (let course of findCourse.course_section) {
+        //                 if (!course.checkTime) {
+        //                     course.checkTime = [];
+        //                 }
+        //                 if (course.sec == parseInt(req.params.sec)) {
+        //                     course.checkTime.push(tmpCheckTime);
+        //                 }
+        //             }
 
-                    await courseModel.findOneAndUpdate({course_id: req.params.course_id}, {course_section: findCourse.course_section});
+        //             await courseModel.findOneAndUpdate({course_id: req.params.course_id}, {course_section: findCourse.course_section});
 
-                    console.log(`{ 
-                        codeCheckIn: tmpCheckTime.code,
-                        course_name: findCourse.course_name, 
-                        dateTime: sec.time, 
-                        sec: sec.sec, 
-                        dataBeforeUpdate: findCourse 
-                    }`,{ 
-                        codeCheckIn: tmpCheckTime.code,
-                        course_name: findCourse.course_name, 
-                        dateTime: sec.time, 
-                        sec: sec.sec, 
-                        dataBeforeUpdate: findCourse 
-                    },)
-                    res.status(200).json({
-                        val: { 
-                            codeCheckIn: tmpCheckTime.code,
-                            course_name: findCourse.course_name, 
-                            dateTime: sec.time, 
-                            sec: sec.sec, 
-                            dataBeforeUpdate: findCourse 
-                        },
-                        msg: 'Check in created'
-                    });
+        //             console.log(`{ 
+        //                 codeCheckIn: tmpCheckTime.code,
+        //                 course_name: findCourse.course_name, 
+        //                 dateTime: sec.time, 
+        //                 sec: sec.sec, 
+        //                 dataBeforeUpdate: findCourse 
+        //             }`,{ 
+        //                 codeCheckIn: tmpCheckTime.code,
+        //                 course_name: findCourse.course_name, 
+        //                 dateTime: sec.time, 
+        //                 sec: sec.sec, 
+        //                 dataBeforeUpdate: findCourse 
+        //             },)
+        //             res.status(200).json({
+        //                 val: { 
+        //                     codeCheckIn: tmpCheckTime.code,
+        //                     course_name: findCourse.course_name, 
+        //                     dateTime: sec.time, 
+        //                     sec: sec.sec, 
+        //                     dataBeforeUpdate: findCourse 
+        //                 },
+        //                 msg: 'Check in created'
+        //             });
                 
-                } else {
-                    throw new Error('Invalid section');
-                }
+        //         } else {
+        //             throw new Error('Invalid section');
+        //         }
 
-            } else {
-                throw new Error('Not found course!');
-            }
-        } else {
-            res.status(200).json({ val: checkTime, msg: 'Check in today already created!'});
-        }
+        //     } else {
+        //         throw new Error('Not found course!');
+        //     }
+        // } else {
+            res.status(200).json({ val: null, msg: 'Check in today already created!'});
+        // }
 
     // } catch (err) { res.status(500).json({ msg: err.message }); }
         
