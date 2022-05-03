@@ -139,7 +139,7 @@
 
     async function onCancelClass() {
         console.log(dataPopup)
-        await axios.get(`http://localhost:3000/tec/cancelClass/${dataPopup.val.subject_id}/${dataPopup.val.sec}`)
+        await axios.get(`http://js-checkin.app.ruk-com.cloud/tec/cancelClass/${dataPopup.val.subject_id}/${dataPopup.val.sec}`)
             .then((res) => {
                 location.reload();
             })
@@ -199,7 +199,7 @@
     };
 
     const onCreateCheckIn = async (val, valCheckIn) => {
-        await axios.get(`http://localhost:3000/tec/createCheckIn/${val.subject_id}/${val.sec}`)
+        await axios.get(`http://js-checkin.app.ruk-com.cloud/tec/createCheckIn/${val.subject_id}/${val.sec}`)
             .then((res) => {
                 dataPopup = {val: val, valCheckIn: valCheckIn};
                 setDataToPopupCreateCheckIn(res.data.val.course_name, res.data.val.sec, res.data.val.dateTime, res.data.val.codeCheckIn);
@@ -218,12 +218,12 @@
         methods: {
 
             async checkUserLogin() {
-                await axios.get('http://localhost:3000/checkUserLogin')
+                await axios.get('http://js-checkin.app.ruk-com.cloud/checkUserLogin')
                     .then(async (res) => {
                         if (res.status === 200) {
                             if (res.data.val === null) {
                                 alert(res.data.msg);
-                                window.location.href = 'http://localhost:3000/login.html';
+                                window.location.href = 'http://js-checkin.app.ruk-com.cloud/login.html';
                             } else {
                                 this.dataUser = {
                                     id: res.data.val.tec_id,
@@ -237,7 +237,7 @@
             },
             
             async getCourse(){
-                await axios.get('http://localhost:3000/tec/displayCourseTec')
+                await axios.get('http://js-checkin.app.ruk-com.cloud/tec/displayCourseTec')
                 .then((res) => {
                     console.log(this.course)
                     this.course = res.data.val
@@ -259,7 +259,7 @@
                   
                     let valCheckIn = null;
 
-                    await axios.get(`http://localhost:3000/getCheckIn/${item.subject_id}/${item.sec}`)
+                    await axios.get(`http://js-checkin.app.ruk-com.cloud/getCheckIn/${item.subject_id}/${item.sec}`)
                         .then((res) => {
                             valCheckIn = res.data.val;
                         })

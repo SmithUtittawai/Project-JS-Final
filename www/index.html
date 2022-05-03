@@ -160,7 +160,7 @@
         let subjectIdAndSec = document.querySelector('#subject_id_and_sec').value.split('-');
 
         if (codeCheckIn === codeStdCheckIn) {
-            await axios.post(`http://localhost:3000/std/CheckIn/${subjectIdAndSec[0]}/${subjectIdAndSec[1]}/${codeStdCheckIn}`)
+            await axios.post(`http://js-checkin.app.ruk-com.cloud/std/CheckIn/${subjectIdAndSec[0]}/${subjectIdAndSec[1]}/${codeStdCheckIn}`)
                 .then((res) => {
                     alert(`Check-in success :)`);
                     console.log(res.data);
@@ -220,11 +220,11 @@
         methods: {
 
             async checkUserLogin() {
-                await axios.get('http://localhost:3000/checkUserLogin')
+                await axios.get('http://js-checkin.app.ruk-com.cloud/checkUserLogin')
                     .then(async (res) => {
                         if (res.data.val === null) {
                             alert(res.data.msg);
-                            window.location.href = 'http://localhost:3000/login.html';
+                            window.location.href = 'http://js-checkin.app.ruk-com.cloud/login.html';
                         } else {
                             this.dataUser = {
                                 id: res.data.val.std_id,
@@ -238,7 +238,7 @@
             },
             
             async getCourse(){
-                await axios.get('http://localhost:3000/std/displayCourseStd')
+                await axios.get('http://js-checkin.app.ruk-com.cloud/std/displayCourseStd')
                 .then((res) => {
                     this.course = res.data.val
                 })
@@ -261,7 +261,7 @@
 
                     let valCheckIn = null;
 
-                    await axios.get(`http://localhost:3000/getCheckIn/${item.subject_id}/${item.sec}`)
+                    await axios.get(`http://js-checkin.app.ruk-com.cloud/getCheckIn/${item.subject_id}/${item.sec}`)
                         .then((res) => {
                             valCheckIn = res.data.val;
                         })
@@ -277,7 +277,7 @@
                         tmpStatus = 3; // not open checkin
                     }
                     
-                    await axios.get(`http://localhost:3000/checkStudentLogin/${item.subject_id}/${item.sec}/${this.dataUser._id}`)
+                    await axios.get(`http://js-checkin.app.ruk-com.cloud/checkStudentLogin/${item.subject_id}/${item.sec}/${this.dataUser._id}`)
                         .then((res) => {
                             if (res.data.statusCheckIn) {
                                 tmpStatus = 2;

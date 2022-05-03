@@ -72,7 +72,7 @@
             async onLogin() {
                 //! student login
                 if (this.statusLogin.std !== false) {
-                    await axios.post('http://localhost:3000/login', {
+                    await axios.post('http://js-checkin.app.ruk-com.cloud/login', {
                         statusLogin: 'std',
                         std_id: this.form.id,
                         std_pwd: this.form.pwd
@@ -80,7 +80,7 @@
                         console.log(res);
                         if (res.status === 200) {
                             alert(res.data.msg);
-                            window.location.href = 'http://localhost:3000/index.html';
+                            window.location.href = 'http://js-checkin.app.ruk-com.cloud/index.html';
                         }
                     }).catch((err) => {
                         alert(err.response.data.msg);
@@ -88,7 +88,7 @@
                         this.form.pwd = '';
                     });
                 } else if (this.statusLogin.tec !== false) {
-                    await axios.post('http://localhost:3000/login', {
+                    await axios.post('http://js-checkin.app.ruk-com.cloud/login', {
                         statusLogin: 'tec',
                         tec_id: this.form.id,
                         tec_pwd: this.form.pwd
@@ -96,7 +96,7 @@
                         console.log(res);
                         if (res.status === 200) {
                             alert(res.data.msg);
-                            window.location.href = 'http://localhost:3000/teacherindex.html';
+                            window.location.href = 'http://js-checkin.app.ruk-com.cloud/teacherindex.html';
                         }
                     }).catch((err) => {
                         alert(err.response.data.msg);
@@ -111,7 +111,7 @@
             }
         },
         async mounted() {
-            // await axios.post('http://localhost:3000/login', this.form).then((res) => console.log(res.data))
+            // await axios.post('http://js-checkin.app.ruk-com.cloud/login', this.form).then((res) => console.log(res.data))
             // .catch((err) => console.log(err.response.data.msg));
         },
 

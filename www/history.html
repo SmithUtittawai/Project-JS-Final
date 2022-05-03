@@ -134,11 +134,11 @@
             },
             
             async checkUserLogin() {
-                await axios.get('http://localhost:3000/checkUserLogin')
+                await axios.get('http://js-checkin.app.ruk-com.cloud/checkUserLogin')
                     .then(async (res) => {
                         if (res.data.val === null) {
                             alert(res.data.msg);
-                            window.location.href = 'http://localhost:3000/login.html';
+                            window.location.href = 'http://js-checkin.app.ruk-com.cloud/login.html';
                         } else {
                             this.dataUser = {
                                 id: res.data.val.std_id,
@@ -151,7 +151,7 @@
             },
 
             async getDataHistory() {
-                await axios('http://localhost:3000/std/getDataHistory')
+                await axios('http://js-checkin.app.ruk-com.cloud/std/getDataHistory')
                     .then((res) => {
                         
                         this.dataHistory = [];

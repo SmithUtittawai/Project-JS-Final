@@ -6,7 +6,7 @@ const app = express();
 const PORT = 3000;
 const bodyPraser = require('body-parser');
 
-mongoose.connect('mongodb://localhost:27017/project')
+mongoose.connect('mongodb://admin:FRQzsm86491@node31966-js-checkin.app.ruk-com.cloud:27017/admin')
     .then(() => console.log('Connected to mongoDB'))
     .catch((err) => console.log('Connection failed, ' + err))
 
