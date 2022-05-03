@@ -124,7 +124,7 @@ router.get('/cancelClass/:course_id/:sec', async (req, res) => {
 
 router.get('/createCheckIn/:course_id/:sec', async (req, res) => {
 
-    try {
+    // try {
 
         let now = new Date();
         let checkDuplicate = await courseModel.findOne({ course_id: req.params.course_id });
@@ -215,7 +215,7 @@ router.get('/createCheckIn/:course_id/:sec', async (req, res) => {
             res.status(200).json({ val: checkInOld, msg: 'Check in today already created!'});
         }
 
-    } catch (err) { res.status(500).json({ msg: err.message }); }
+    // } catch (err) { res.status(500).json({ msg: err.message }); }
         
 });
 
